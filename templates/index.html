@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Laporan Pemeliharaan TI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8fafc; }
+        .img-preview { width: 100%; height: 140px; object-fit: cover; border: 2px dashed #cbd5e1; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Form Input -->
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white font-weight-bold">
+                    <h5 class="mb-0">Form Pemeliharaan Perangkat TI</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <h6 class="text-primary border-bottom pb-1">Identitas Petugas</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                {{ form.nama.label(class="form-label") }}
+                                {{ form.nama(class="form-control form-control-sm") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.nip.label(class="form-label") }}
+                                {{ form.nip(class="form-control form-control-sm") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.jabatan.label(class="form-label") }}
+                                {{ form.jabatan(class="form-control form-control-sm") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.tanggal.label(class="form-label") }}
+                                {{ form.tanggal(class="form-control form-control-sm", type="date") }}
+                            </div>
+                        </div>
+
+                        <h6 class="text-primary border-bottom pb-1">Uraian Pekerjaan</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                {{ form.perangkat.label(class="form-label") }}
+                                {{ form.perangkat(class="form-control form-control-sm") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.kategori.label(class="form-label") }}
+                                {{ form.kategori(class="form-select form-select-sm") }}
+                            </div>
+                            <div class="col-12">
+                                {{ form.uraian.label(class="form-label") }}
+                                {{ form.uraian(class="form-control form-control-sm", rows="2") }}
+                            </div>
+                            <div class="col-12">
+                                {{ form.penjelasan.label(class="form-label") }}
+                                {{ form.penjelasan(class="form-control form-control-sm", rows="3") }}
+                            </div>
+                        </div>
+
+                        <h6 class="text-primary border-bottom pb-1">Dokumentasi Foto</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6 text-center">
+                                <label class="form-label d-block text-start">Foto Sebelum</label>
+                                <img id="preview1" src="https://via.placeholder.com/300x140?text=Foto+1" class="img-preview mb-1">
+                                <input type="file" id="inputFoto1" class="form-control form-control-sm" accept="image/*">
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <label class="form-label d-block text-start">Foto Sesudah</label>
+                                <img id="preview2" src="https://via.placeholder.com/300x140?text=Foto+2" class="img-preview mb-1">
+                                <input type="file" id="inputFoto2" class="form-control form-control-sm" accept="image/*">
+                            </div>
+                        </div>
+
+                        <h6 class="text-primary border-bottom pb-1">Atasan / Penanggung Jawab</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                {{ form.nama_atasan.label(class="form-label") }}
+                                {{ form.nama_atasan(class="form-control form-control-sm") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.nip_atasan.label(class="form-label") }}
+                                {{ form.nip_atasan(class="form-control form-control-sm") }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Simpan & Perbarui Database</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Histori Laporan -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Histori Laporan</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for item in laporan_list %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <div>
+                                <strong class="d-block">{{ item.perangkat }}</strong>
+                                <small class="text-muted">{{ item.nama }} | {{ item.tanggal.strftime('%d-%m-%Y') }}</small>
+                            </div>
+                            <a href="{{ url_for('cetak_pdf', id=item.id) }}" target="_blank" class="btn btn-outline-danger btn-sm">PDF</a>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item text-center text-muted p-3">Belum ada data laporan.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Mengubah input file gambar menjadi string Base64 menggunakan jQuery
+        function processImage(inputSelector, previewSelector, hiddenSelector) {
+            $(inputSelector).on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $(previewSelector).attr('src', e.target.result);
+                        $(hiddenSelector).val(e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        processImage('#inputFoto1', '#preview1', '#foto1_base64');
+        processImage('#inputFoto2', '#preview2', '#foto2_base64');
+    });
+</script>
+</body>
+</html>

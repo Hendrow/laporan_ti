@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Pemeliharaan TI</title>
+    <style>
+        @page { size: A4; margin: 12mm 15mm; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 9.5pt; color: #1e293b; line-height: 1.4; }
+        .header { border-bottom: 2px solid #0284c7; padding-bottom: 5px; margin-bottom: 10px; }
+        .header h2 { margin: 0; color: #0f172a; font-size: 14pt; text-transform: uppercase; }
+        .header p { margin: 2px 0 0 0; color: #0284c7; font-size: 8.5pt; font-weight: bold; }
+        .section-title { font-size: 9.5pt; font-weight: bold; background: #e2e8f0; padding: 4px 8px; border-left: 4px solid #0284c7; margin: 10px 0 6px 0; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 4px 6px; vertical-align: top; }
+        .label { font-weight: bold; color: #475569; width: 22%; }
+        .value { border-bottom: 1px dashed #cbd5e1; }
+        .box { border: 1px solid #cbd5e1; background: #fff; padding: 6px; border-radius: 4px; }
+        .photo-img { width: 100%; max-height: 130px; object-fit: contain; border: 1px solid #cbd5e1; border-radius: 4px; }
+        .signature-table { margin-top: 20px; }
+        .signature-table td { text-align: center; width: 50%; }
+        .signature-space { height: 45px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Laporan Pemeliharaan Perangkat TI</h2>
+        <p>DIVISI TEKNOLOGI INFORMASI & KOMUNIKASI</p>
+    </div>
+
+    <div class="section-title">I. Identitas Petugas</div>
+    <table>
+        <tr><td class="label">Nama Petugas</td><td>:</td><td class="value"><strong>{{ data.nama }}</strong></td></tr>
+        <tr><td class="label">NIP / ID Staff</td><td>:</td><td class="value">{{ data.nip }}</td></tr>
+        <tr><td class="label">Jabatan</td><td>:</td><td class="value">{{ data.jabatan }}</td></tr>
+        <tr><td class="label">Tanggal Pelaksanaan</td><td>:</td><td class="value">{{ data.tanggal.strftime('%d-%m-%Y') }}</td></tr>
+    </table>
+
+    <div class="section-title">II. Objek & Uraian Pekerjaan</div>
+    <table>
+        <tr>
+            <td style="width:50%; padding-left:0;">
+                <strong>Perangkat / Unit:</strong>
+                <div class="box">{{ data.perangkat }}</div>
+            </td>
+            <td style="width:50%; padding-right:0;">
+                <strong>Kategori Pemeliharaan:</strong>
+                <div class="box">{{ data.kategori }}</div>
+            </td>
+        </tr>
+    </table>
+    <div style="margin-top:6px;">
+        <strong>Uraian Pekerjaan:</strong>
+        <div class="box">{{ data.uraian }}</div>
+    </div>
+
+    <div class="section-title">III. Penjelasan Detail Pekerjaan</div>
+    <div class="box" style="white-space: pre-line;">{{ data.penjelasan }}</div>
+
+    <div class="section-title">IV. Dokumentasi Foto Pekerjaan</div>
+    <table>
+        <tr>
+            <td style="width: 49%; text-align: center;">
+                {% if data.foto1_base64 %}
+                    <img src="{{ data.foto1_base64 }}" class="photo-img">
+                {% else %}
+                    <div class="box" style="height: 100px; line-height: 100px; color: #94a3b8;">[ Tidak ada Foto 1 ]</div>
+                {% endif %}
+                <div style="font-size: 8pt; margin-top: 2px;">Foto Sebelum / Proses Pengerjaan</div>
+            </td>
+            <td style="width: 2%;"></td>
+            <td style="width: 49%; text-align: center;">
+                {% if data.foto2_base64 %}
+                    <img src="{{ data.foto2_base64 }}" class="photo-img">
+                {% else %}
+                    <div class="box" style="height: 100px; line-height: 100px; color: #94a3b8;">[ Tidak ada Foto 2 ]</div>
+                {% endif %}
+                <div style="font-size: 8pt; margin-top: 2px;">Foto Sesudah / Hasil Pekerjaan</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="signature-table">
+        <tr>
+            <td>
+                <div>Petugas Pelaksana TI,</div>
+                <div class="signature-space"></div>
+                <div><strong><u>{{ data.nama }}</u></strong></div>
+                <div style="font-size: 8.5pt; color: #64748b;">NIP. {{ data.nip }}</div>
+            </td>
+            <td>
+                <div>Mengetahui / Penanggung Jawab,</div>
+                <div class="signature-space"></div>
+                <div><strong><u>{{ data.nama_atasan }}</u></strong></div>
+                <div style="font-size: 8.5pt; color: #64748b;">NIP. {{ data.nip_atasan }}</div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
