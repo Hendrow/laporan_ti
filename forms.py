@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired
 
 class LaporanForm(FlaskForm):
     nama = StringField('Nama Petugas', validators=[DataRequired()])
-    nip = StringField('NIP / ID Staff', validators=[DataRequired()])
+    nip = StringField('NIP', validators=[DataRequired()])
     jabatan = StringField('Jabatan', validators=[DataRequired()])
     tanggal = DateField('Tanggal Pelaksanaan', format='%Y-%m-%d', validators=[DataRequired()])
     
@@ -20,6 +20,8 @@ class LaporanForm(FlaskForm):
     nama_atasan = StringField('Nama Atasan', validators=[DataRequired()])
     nip_atasan = StringField('NIP Atasan', validators=[DataRequired()])
     
-    # Hidden field untuk menampung String Base64 Gambar dari jQuery
+    # Hidden fields untuk 4 Foto Base64
     foto1_base64 = HiddenField('Foto 1')
     foto2_base64 = HiddenField('Foto 2')
+    foto3_base64 = HiddenField('Foto 3')
+    foto4_base64 = HiddenField('Foto 4')

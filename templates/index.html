@@ -39,15 +39,15 @@
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 {{ form.nama.label(class="form-label") }}
-                                {{ form.nama(class="form-control form-control-sm") }}
+                                {{ form.nama(class="form-control form-control-sm", value="Hendro Wijaya") }}
                             </div>
                             <div class="col-md-6">
                                 {{ form.nip.label(class="form-label") }}
-                                {{ form.nip(class="form-control form-control-sm") }}
+                                {{ form.nip(class="form-control form-control-sm", value="198505022014021003") }}
                             </div>
                             <div class="col-md-6">
                                 {{ form.jabatan.label(class="form-label") }}
-                                {{ form.jabatan(class="form-control form-control-sm") }}
+                                {{ form.jabatan(class="form-control form-control-sm", value="Pranata Komputer Mahir") }}
                             </div>
                             <div class="col-md-6">
                                 {{ form.tanggal.label(class="form-label") }}
@@ -55,7 +55,7 @@
                             </div>
                         </div>
 
-                        <h6 class="text-primary border-bottom pb-1">Uraian Pekerjaan</h6>
+                        <h6 class="text-primary border-bottom pb-1">Objek / Uraian Pekerjaan</h6>
                         <div class="row g-2 mb-3">
                             <div class="col-md-6">
                                 {{ form.perangkat.label(class="form-label") }}
@@ -75,17 +75,27 @@
                             </div>
                         </div>
 
-                        <h6 class="text-primary border-bottom pb-1">Dokumentasi Foto</h6>
+                        <h6 class="text-primary border-bottom pb-1">Dokumentasi Foto (Maks. 4 Foto)</h6>
                         <div class="row g-2 mb-3">
-                            <div class="col-md-6 text-center">
-                                <label class="form-label d-block text-start">Foto Sebelum</label>
-                                <img id="preview1" src="https://via.placeholder.com/300x140?text=Foto+1" class="img-preview mb-1">
+                            <div class="col-md-6 text-center mb-2">
+                                <label class="form-label d-block text-start">Foto 1 (Kondisi Awal / Masalah)</label>
+                                <!-- <img id="preview1" src="https://via.placeholder.com/300x140?text=Foto+1" class="img-preview mb-1"> -->
                                 <input type="file" id="inputFoto1" class="form-control form-control-sm" accept="image/*">
                             </div>
-                            <div class="col-md-6 text-center">
-                                <label class="form-label d-block text-start">Foto Sesudah</label>
-                                <img id="preview2" src="https://via.placeholder.com/300x140?text=Foto+2" class="img-preview mb-1">
+                            <div class="col-md-6 text-center mb-2">
+                                <label class="form-label d-block text-start">Foto 2 (Proses Pembongkaran / Pembersihan)</label>
+                                <!-- <img id="preview2" src="https://via.placeholder.com/300x140?text=Foto+2" class="img-preview mb-1"> -->
                                 <input type="file" id="inputFoto2" class="form-control form-control-sm" accept="image/*">
+                            </div>
+                            <div class="col-md-6 text-center mb-2">
+                                <label class="form-label d-block text-start">Foto 3 (Penggantian / Perbaikan Komponen)</label>
+                                <!-- <img id="preview3" src="https://via.placeholder.com/300x140?text=Foto+3" class="img-preview mb-1"> -->
+                                <input type="file" id="inputFoto3" class="form-control form-control-sm" accept="image/*">
+                            </div>
+                            <div class="col-md-6 text-center mb-2">
+                                <label class="form-label d-block text-start">Foto 4 (Pengujian / Hasil Akhir)</label>
+                                <!-- <img id="preview4" src="https://via.placeholder.com/300x140?text=Foto+4" class="img-preview mb-1"> -->
+                                <input type="file" id="inputFoto4" class="form-control form-control-sm" accept="image/*">
                             </div>
                         </div>
 
@@ -107,29 +117,87 @@
             </div>
         </div>
 
-        <!-- Tabel Histori Laporan -->
+        <!-- Kolom Kanan: Filter & Histori Laporan -->
         <div class="col-lg-5">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Histori Laporan</h5>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fs-6">Histori & Pencarian</h5>
+                    <span class="badge bg-primary">{{ laporan_list|length }} Data</span>
                 </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        {% for item in laporan_list %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                            <div>
-                                <strong class="d-block">{{ item.perangkat }}</strong>
-                                <small class="text-muted">{{ item.nama }} | {{ item.tanggal.strftime('%d-%m-%Y') }}</small>
+                <div class="card-body bg-light">
+                    <!-- Form Pencarian & Filter Tanggal -->
+                    <form method="GET" action="{{ url_for('index') }}" class="row g-2 mb-2">
+                        <div class="col-12">
+                            <input type="text" name="q" class="form-control form-control-sm" placeholder="Cari nama petugas / perangkat..." value="{{ q }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label mb-0 small text-muted">Dari Tanggal:</label>
+                            <input type="date" name="tgl_mulai" class="form-control form-control-sm" value="{{ tgl_mulai }}">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label mb-0 small text-muted">Sampai Tanggal:</label>
+                            <input type="date" name="tgl_selesai" class="form-control form-control-sm" value="{{ tgl_selesai }}">
+                        </div>
+                        <div class="col-12 d-flex gap-1 mt-2">
+                            <button type="submit" class="btn btn-sm btn-primary flex-fill fw-bold">Filter</button>
+                            {% if q or tgl_mulai or tgl_selesai %}
+                                <a href="{{ url_for('index') }}" class="btn btn-sm btn-outline-secondary">Reset</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+
+                <!-- List Data -->
+                <ul class="list-group list-group-flush border-top">
+                    {% for item in laporan_list %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <div style="max-width: 65%;">
+                            <strong class="d-block text-truncate" title="{{ item.perangkat }}">{{ item.perangkat }}</strong>
+                            <small class="text-muted d-block">{{ item.nama }}</small>
+                            <small class="badge bg-secondary font-monospace">{{ item.tanggal.strftime('%d-%m-%Y') }}</small>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <!-- Tombol Cetak PDF -->
+                            <a href="{{ url_for('cetak_pdf', id=item.id) }}" target="_blank" class="btn btn-outline-danger btn-sm" title="Cetak PDF">
+                                PDF
+                            </a>
+                            
+                            <!-- Tombol Hapus (Trigger Modal) -->
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalHapus{{ item.id }}" title="Hapus Laporan">
+                                &times;
+                            </button>
+                        </div>
+                    </li>
+
+                    <!-- Modal Konfirmasi Hapus -->
+                    <div class="modal fade" id="modalHapus{{ item.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header py-2 bg-danger text-white">
+                                    <h6 class="modal-title">Konfirmasi Hapus</h6>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p class="small mb-0">Apakah Anda yakin ingin menghapus laporan perangkat <strong>{{ item.perangkat }}</strong>?</p>
+                                </div>
+                                <div class="modal-footer py-1 justify-content-center">
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <form action="{{ url_for('hapus_laporan', id=item.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
+                                </div>
                             </div>
-                            <a href="{{ url_for('cetak_pdf', id=item.id) }}" target="_blank" class="btn btn-outline-danger btn-sm">PDF</a>
-                        </li>
-                        {% else %}
-                        <li class="list-group-item text-center text-muted p-3">Belum ada data laporan.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <li class="list-group-item text-center text-muted p-4">
+                        <small>Tidak ada laporan yang ditemukan.</small>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
+
     </div>
 </div>
 
@@ -154,6 +222,8 @@
 
         processImage('#inputFoto1', '#preview1', '#foto1_base64');
         processImage('#inputFoto2', '#preview2', '#foto2_base64');
+        processImage('#inputFoto3', '#preview3', '#foto3_base64');
+        processImage('#inputFoto4', '#preview4', '#foto4_base64');
     });
 </script>
 </body>
