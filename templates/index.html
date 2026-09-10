@@ -207,16 +207,49 @@
     $(document).ready(function() {
         // Mengubah input file gambar menjadi string Base64 menggunakan jQuery
         function processImage(inputSelector, previewSelector, hiddenSelector) {
-            $(inputSelector).on('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        $(previewSelector).attr('src', e.target.result);
-                        $(hiddenSelector).val(e.target.result);
-                    }
-                    reader.readAsDataURL(file);
-                }
+            $(inputSelector).on('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Tentukan ukuran maksimal (Lebar / Tinggi)
+                        const MAX_WIDTH = 800;
+                        const MAX_HEIGHT = 800;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        // Draw ke Canvas untuk kompresi
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Konversi ke Base64 dengan kualitas 0.7 (70%)
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+                        // Set preview dan isi hidden input
+                        $(previewSelector).attr('src', compressedBase64);
+                        $(hiddenSelector).val(compressedBase64);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
             });
         }
 
