@@ -7,6 +7,7 @@ from forms import LaporanForm
 from weasyprint import HTML
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024
 app.config['SECRET_KEY'] = 'kunci-rahasia-aplikasi-ti'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///laporan.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
