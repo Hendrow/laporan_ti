@@ -11,10 +11,11 @@ class LaporanForm(FlaskForm):
     perangkat = StringField('Perangkat / Unit Kerja', validators=[DataRequired()])
     kategori = SelectField('Kategori Pemeliharaan', choices=[
         ('Pilih Kategori', 'Pilih Kategori'),
-        ('Instalasi Aplikasi / Perangkat', 'Instalasi Aplikasi / Perangkat'),
+        ('Install Aplikasi / Perangkat', 'Instalasi Aplikasi / Perangkat'),
         ('Pemeliharaan Rutin / Preventif', 'Pemeliharaan Rutin / Preventif'),
         ('Perbaikan / Korektif', 'Perbaikan / Korektif'),
-        ('Pengolahan Data', 'Pengolahan Data')      
+        ('Pengolahan Data', 'Pengolahan Data'),
+        ('Penggandaan Data', 'Penggandaan Data')      
     ], validators=[DataRequired()])
     uraian = TextAreaField('Uraian Pekerjaan', validators=[DataRequired()])
     penjelasan = TextAreaField('Penjelasan Detail Pekerjaan', validators=[DataRequired()])
