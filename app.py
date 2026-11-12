@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import Flask, render_template, redirect, url_for, flash, make_response, request
+from flask import Flask, render_template, redirect, url_for, flash, make_response, request, jsonify
 from flask_migrate import Migrate
 from models import db, Laporan
 from forms import LaporanForm
@@ -33,7 +33,9 @@ def index():
             foto1_base64=form.foto1_base64.data,
             foto2_base64=form.foto2_base64.data,
             foto3_base64=form.foto3_base64.data,
-            foto4_base64=form.foto4_base64.data
+            foto4_base64=form.foto4_base64.data,
+            foto5_base64=form.foto5_base64.data,
+            foto6_base64=form.foto6_base64.data
         )
         db.session.add(laporan)
         db.session.commit()
@@ -86,15 +88,64 @@ def cetak_pdf(id):
     response.headers['Content-Disposition'] = f'inline; filename=Laporan_{laporan.id}.pdf'
     return response
 
-
-@app.route('/hapus-laporan/<int:id>', methods=['POST'])
+# app.py (tambahkan route ini di bawah route lainnya)
+@app.route('/hapus-laporan/<int:id>', methods=['POST', 'DELETE'])
 def hapus_laporan(id):
-  laporan = Laporan.query.get_or_404(id)
-  db.session.delete(laporan)
-  db.session.commit()
-  flash('Laporan berhasil dihapus dari database.', 'warning')
-  return redirect(url_for('index'))
+    laporan = Laporan.query.get_or_404(id)
+    db.session.delete(laporan)
+    db.session.commit()
+    
+    # Jika diakses lewat AJAX / Fetch
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'status': 'success', 'message': 'Laporan berhasil dihapus.'})
+    
+    flash('Laporan berhasil dihapus!', 'success')
+    return redirect(url_for('index'))
 
+
+# Route api ajax untuk pagination dan pencarian
+@app.route('/api/laporan', methods=['GET'])
+def get_laporan_api():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 7, type=int) # Limit 7 laporan per halaman
+    search_query = request.args.get('q', '', type=str).strip()
+
+    # Query Dasar
+    query = Laporan.query
+
+    # Filter Pencarian (Nama Petugas, Perangkat, Kategori, atau Tanggal)
+    if search_query:
+        query = query.filter(
+            (Laporan.perangkat.ilike(f'%{search_query}%')) |
+            (Laporan.nama.ilike(f'%{search_query}%')) |
+            (Laporan.kategori.ilike(f'%{search_query}%'))
+        )
+
+    # Urutkan dari yang terbaru dan terapkan Pagination SQLAlchemy
+    pagination = query.order_by(Laporan.created_at.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+        )
+
+    items = []
+    for item in pagination.items:
+        items.append({
+            'id': item.id,
+            'perangkat': item.perangkat,
+            'nama': item.nama,
+            'kategori': item.kategori,
+            'tanggal': item.tanggal.strftime('%H:%M, %d %b %Y')
+        })
+
+    return jsonify({
+        'items': items,
+        'total': pagination.total,
+        'page': pagination.page,
+        'pages': pagination.pages,
+        'has_prev': pagination.has_prev,
+        'has_next': pagination.has_next,
+        'prev_num': pagination.prev_num,
+        'next_num': pagination.next_num
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

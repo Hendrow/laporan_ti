@@ -18,10 +18,12 @@ class Laporan(db.Model):
     nama_atasan = db.Column(db.String(100), nullable=False)
     nip_atasan = db.Column(db.String(50), nullable=False)
     
-    # 4 Field Foto Dokumentasi
+    # 6 Field Foto Dokumentasi
     foto1_base64 = db.Column(db.Text, nullable=True)
     foto2_base64 = db.Column(db.Text, nullable=True)
     foto3_base64 = db.Column(db.Text, nullable=True)
     foto4_base64 = db.Column(db.Text, nullable=True)
+    foto5_base64 = db.Column(db.Text, nullable=True)
+    foto6_base64 = db.Column(db.Text, nullable=True)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

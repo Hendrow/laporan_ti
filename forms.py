@@ -23,8 +23,10 @@ class LaporanForm(FlaskForm):
     nama_atasan = StringField('Nama Atasan', validators=[DataRequired()])
     nip_atasan = StringField('NIP Atasan', validators=[DataRequired()])
     
-    # Hidden fields untuk 4 Foto Base64
+    # Hidden fields untuk 6 Foto Base64
     foto1_base64 = HiddenField('Foto 1')
     foto2_base64 = HiddenField('Foto 2')
     foto3_base64 = HiddenField('Foto 3')
     foto4_base64 = HiddenField('Foto 4')
+    foto5_base64 = HiddenField('Foto 5')
+    foto6_base64 = HiddenField('Foto 6')
